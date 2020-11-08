@@ -14,88 +14,285 @@ let board = [
   ['','',''],
   ['','','']
 ];
+let gameOver = false;
+let move = false;
+let computerStart = false;
 
-// is called when a square is clicked. "this" = element here
-const handleClick = (element) => {
-  // check to see if the square clicked has anything in it, if not continue
-  // this prevents an X being changed to an O
-  if(!document.getElementById(element.id).innerHTML){
-    addMarker(element.id)
-    updateBoard(element.id)
-    checkForWin()
+
+
+// is called when a square is clicked. "this" = element here, written as 'handleClick(this)' in HTML
+function handleClick (element) {
+  if (!document.getElementById(element.id).innerHTML) {
+    addMarker (element.id)
+    move = false;
+    setTimeout(() =>{
+      computerMove();
+    },400)
   }
 }
 
-const addMarker = (id) => {
-  console.log(`We'll place a mark on square: ${id}`)
-  // @TODO, Mix & Match. 
-  // You will need the following pieces:
-  
-  // = currentMarker
-  // .getElementById(id)
-  // document
-  // .innerHTML 
-  
-  // Arrange the above pieces into one a single line of code
-  // to add an X or O to the board to the DOM so it can be scene on the screen.
+const computerMove = () =>{
+  if (gameOver === false){
+    computerLogic()
+    while(move === false){
+      let row = Math.floor(Math.random() * 3);
+      let column = Math.floor(Math.random() * 3);
+      if (board[row][column] === ''){
+        console.log("computer", row, column);
+        addMarker(row + "-" + column);
+        move = true;
+      }
+    }
+  }
 }
 
-// passes the element's id attribute from HTML to be used
-const updateBoard = (id) => {
-  // parses the id string into a number then captures the first and last part the newly create number as row & column
+const computerLogic = () => {
+  // computer row win
+  if (move === false){
+    let rowX = 0;
+    for (let i = 0; i < 3; i++){
+      if ((board[i][0] === 'O' && board[i][1] === 'O') || (board[i][1] === 'O' && board[i][2] === 'O') || (board[i][0] === 'O' && board[i][2] === 'O')){
+        rowX = i;
+        for(let x = 0; x < 3; x++){
+          let row = rowX;
+          if(board[row][x] === ''){
+            addMarker(row + '-' + x);
+            move = true;
+          }
+        }
+      }
+    }
+  }
+  // computer blocking 'X' on row win
+  if (move === false) {
+    let rowX = 0;
+    for(let i = 0; i < 3; i++) {
+      if ((board[i][0] === 'X' && board[i][1] ==='X') || (board[i][1] === 'X' && board[i][2] ==='X') || (board[i][0] === 'X' && board[i][2] === 'X')) {
+        rowX = i;
+        for(let x = 0; x < 3; x++) {
+        let row = rowOfX;
+        if (board[row][x] === '') {
+          addMarker(row + '-' + x);
+          move = true;
+          }
+        }
+      }``
+    }
+  }  
+  // computer column win
+  if (move === false){
+    let columnX = 0;
+    for(let i = 0; i < 3; i++){
+      if ((board[0][i] === 'O' && board[1][0] ==='O') || (board[1][i] === 'O' && board[2][i] === 'O') || (board[0][i] === 'O' && board[2][i])){
+        columnX = i;
+        for(let x = 0; x < 3; x++){
+          let column = columnX;
+          if (board[x][column] === ''){
+            addMarker(x + '-' + column)
+            move = true;
+          }
+        }
+      }
+    }
+  }
+  // computer column block
+  if (move === false) {
+    let columnX = 0;
+    for(let i = 0; i < 3; i++) {
+      if ((board[0][i] === 'X' && board[1][i] ==='X') || (board[1][i] === 'X' && board[2][i] ==='X') || (board[0][i] === 'X' && board[2][i] ==='X')) {
+        columnX = i;
+        for(let x = 0; x < 3; x++) {
+        let column = columnX;
+        if (board[x][column] === '') {
+          addMarker(x + '-' + column);
+          move = true;
+          }
+        }
+      }
+    }
+  }  
+  // diagonal win 1
+  if (move === false){
+    if ((board[0][0] === 'O' && board[1][1] ==='O') || (board[1][1] === 'O' && board[2][2] ==='O') || (board[0][0] === 'O' && board[2][2] ==='O')){
+      for(let i = 0; i < 3; i++){
+        if (board[i][i] === ''){
+          addMarker(i + '' + i);
+          move=true
+        }
+      }
+    }
+  }
+  // diagonal win 2
+  if (move === false) {
+    if ((board[2][0] === 'O' && board[1][1] ==='O') || (board[1][1] === 'O' && board[0][2] ==='O') || (board[2][0] === 'O' && board[0][2] ==='O')) {
+         let a = 2;
+         for (let i = 0; i < 3; i++) {
+           if (board[a][i] === '') {
+           addMarker(a + '-' + i);
+           move = true;
+         }
+         a = a - 1;
+       }
+    }
+  }
+  // diagonal blocks
+  if (move === false){
+    if ((board[0][0] === 'X' && board[1][1] ==='X') || (board[1][1] === 'X' && board[2][2] ==='X') || (board[0][0] === 'X' && board[2][2] ==='X')){
+      for(let i = 0; i < 3; i++){
+        if (board[i][i] === ''){
+          addMarker(i + '' + i);
+          move=true
+        }
+      }
+    }
+  }
+  if (move === false) {
+    if ((board[2][0] === 'X' && board[1][1] ==='X') || (board[1][1] === 'X' && board[0][2] ==='X') || (board[2][0] === 'X' && board[0][2] ==='X')) {
+          let a = 2;
+          for (let i = 0; i < 3; i++) {
+            if (board[a][i] === '') {
+            addMarker(a + '-' + i);
+            move = true;
+          }
+          a = a - 1;
+        }
+    }
+  } 
+}
+// end } of computerLogic
+
+const addMarker = (id) => {
+  // @TODO, Mix & Match. 
+  document.getElementById(id).innerHTML = currentMarker;
   const row = parseInt(id.charAt(0))
-  const column = parseInt(id.charAt(2)) 
+  const column = parseInt(id.charAt(2))
 
-  console.log(`you clicked the sq at ${row} and ${column}`)
-  console.log(board)
+  board[row][column] = currentMarker
+  // console.log(board)
+  setTimeout(function() {
+    checkForWin();
+    }, 300)
+}
 
-  // @TODO, Your code here: use the above information to change the board variable(array of arrays)
-  // HINT: in your browser open up the dev tools -> console
+// Computer player function
+
+// Resets the game board
+const resetBoard = () => {
+  // sanity check: this tells us the function is being called
+  // collects all of the "td"s into an HTML Collection: https://www.w3schools.com/jsref/dom_obj_htmlcollection.asp  
+  // loops over the HTML Collections and clears out the Xs and Os
+  // @TODO, Your code here: make sure to reset the array of arrays to empty for a new game
+  board =
+      ['', '', ''],
+      ['', '', ''],
+      ['', '', ''];
+  console.log("the board was cleared!")
+  const squares = document.getElementsByTagName("TD")
+  for (i = 0; i < squares.length; i++) {
+      console.log(squares[i]);
+      squares[i].innerHTML = "";
+      location.reload();
+      return false;
+  }
+};
+const checkForTie = () => {
+  let tie = true;
+  for (let i = 0; i < 3; i++) {
+    for (let x = 0; x < 3; x++) {
+      // console.log(board[i][x])
+      if (board[i][x] == "") {
+        tie = false;
+        // console.log(board[i][x], i, x)
+      }
+    }
+  } 
+  // console.log({tie})
+  if (tie) {
+    window.alert(`Tie!`)
+    winner.innerHTML = "It's a Tie! Try again."
+    gameOver = true;
+  }
 }
 
 const checkForWin = () => {
   // calls each checkForWin possibility and if any are true gives a page alert,
   if(horizontalWin() || verticalWin() || diagonalWin()) {
-    // **BONUS** you could make the dismissal of this alert window reset the board...
-    window.alert(`Player ${currentMarker} won!`)
+    gameOver = true; 
+    setTimeout(() => {
+      window.alert(`Player ${currentMarker} won!`)
+    }, 500)
+  } else if(tieGame()) {
+    gameOver = true;
+    setTimeout(() => {
+      window.alert('Tie!')
+    }, 500)
   } else {
-    // if no win, change the marker from X to O, or O to X for the next player.
     changeMarker()
   }
 }
 
 const horizontalWin = () => {
   // @TODO, Your code here: to check for horizontal wins
+  if (
+    (board[0][0] == "X" && board[0][1] == "X" && board[0][2] == "X") ||
+    (board[0][0] == "O" && board[0][1] == "O" && board[0][2] == "O") ||
+    (board[1][0] == "X" && board[1][1] == "X" && board[1][2] == "X") ||
+    (board[1][0] == "O" && board[1][1] == "O" && board[1][2] == "O") ||
+    (board[2][0] == "X" && board[2][1] == "X" && board[2][2] == "X") ||
+    (board[2][0] == "O" && board[2][1] == "O" && board[2][2] == "O")){
+      return true;
+    }
 }
 
 const verticalWin = () => {
   // @TODO, Your code here: to check for vertical wins
+  if (
+    (board[0][0] == "X" && board[1][0] == "X" && board[2][0] == "X") ||
+    (board[0][0] == "O" && board[1][0] == "O" && board[2][0] == "O") ||
+    (board[0][1] == "X" && board[1][1] == "X" && board[2][1] == "X") ||
+    (board[0][1] == "O" && board[1][1] == "O" && board[2][1] == "O") ||
+    (board[0][2] == "X" && board[1][2] == "X" && board[2][2] == "X") ||
+    (board[0][2] == "O" && board[1][2] == "O" && board[2][2] == "O")){
+      return true;
+    }
 }
 
 const diagonalWin = () => {
   // @TODO, Your code here: to check for diagonal wins
+  if (
+    (board[0][0] == "X" && board[1][1] == "X" && board[2][2] == "X") ||
+    (board[0][0] == "O" && board[1][1] == "O" && board[2][2] == "O") ||
+    (board[0][2] == "O" && board[1][1] == "O" && board[2][0] == "O") ||
+    (board[0][2] == "X" && board[1][1] == "X" && board[2][0] == "X")){
+      return true;
+    }
+}
+
+
+const tieGame = () => {
+  if((board[0][0] === 'X' || board[0][0] === 'O') && 
+    (board[0][1] === 'X' || board[0][1] === 'O') &&
+    (board[0][2] === 'X' || board[0][2] === 'O') &&
+    (board[1][0] === 'X' || board[1][0] === 'O') &&
+    (board[1][1] === 'X' || board[1][1] === 'O') &&
+    (board[1][2] === 'X' || board[1][2] === 'O') &&
+    (board[2][0] === 'X' || board[2][0] === 'O') &&
+    (board[2][1] === 'X' || board[2][1] === 'O') &&
+    (board[2][2] === 'X' || board[2][2] === 'O')){
+    return true;
+    } 
 }
 
 const changeMarker = () => {
   // ternary operator: if it's an X make it an O, if O make it an X
-  currentMarker = currentMarker === "X" ? "O" : "X"
-}
-
-const resetBoard = () => {
-  // sanity check: this tells us the function is being called
-  console.log("the board was cleared!")
-
-  // collects all of the "td"s into an HTML Collection: https://www.w3schools.com/jsref/dom_obj_htmlcollection.asp  
-  const squares = document.getElementsByTagName("TD")
-  
-  // loops over the HTML Collections and clears out the Xs and Os
-  for (i=0; i<squares.length; i++) {
-    console.log(squares[i])
-    squares[i].innerHTML = null
+  if(currentMarker === 'X'){
+    currentMarker = 'O'
+  } else {
+    currentMarker = 'X'
   }
-  
-  // @TODO, Your code here: make sure to reset the array of arrays to empty for a new game
 }
+
+
 
 // **BONUSES**
 
